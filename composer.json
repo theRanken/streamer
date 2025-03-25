@@ -1,0 +1,19 @@
+{
+    "name": "ranken/streamer",
+    "description": "A component package that provides server sent event streaming response capabilities",
+    "type": "library",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ranken\\Streamer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dev Ranken",
+            "email": "rankencorp@gmail.com"
+        }
+    ]
+}
