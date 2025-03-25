@@ -13,22 +13,38 @@ composer require theranken/php-sse-stream
 ### Basic Example
 
 ```php
-use SSEStream\ServerSentEvents;
+use Streamer\ServerSentEvents;
 
 $sse = new ServerSentEvents();
 
 // Send a single event
-$sse->send([
+$sse->sendEvent([
     'message' => 'Hello, World!',
     'timestamp' => time()
 ]);
 
 // Stream events
-$sse->stream(function() {
+$sse->streamEvents(function() {
     return [
         'type' => 'status',
         'data' => [
             'message' => 'Periodic update',
+            'timestamp' => time()
+        ]
+    ];
+});
+
+// Using static methods
+ServerSentEvents::send([
+    'message' => 'Static send example',
+    'timestamp' => time()
+]);
+
+ServerSentEvents::stream(function() {
+    return [
+        'type' => 'status',
+        'data' => [
+            'message' => 'Static stream example',
             'timestamp' => time()
         ]
     ];
@@ -54,22 +70,36 @@ Usage in Different Frameworks:
 
 // Laravel
 Route::get('/events', function () {
-    $sse = new SSEStream\ServerSentEvents();
+    $sse = new Streamer\ServerSentEvents();
     $sse->stream(fn() => ['type' => 'status', 'data' => ['message' => 'Laravel']]);
 });
 
 // Symfony
 public function events()
 {
-    $sse = new SSEStream\ServerSentEvents();
+    $sse = new Streamer\ServerSentEvents();
     $sse->stream(fn() => ['type' => 'status', 'data' => ['message' => 'Symfony']]);
 }
 
 // Leaf PHP
 app()->get('/events', function () {
-    $sse = new SSEStream\ServerSentEvents();
+    $sse = new Streamer\ServerSentEvents();
     $sse->stream(fn() => ['type' => 'status', 'data' => ['message' => 'Leaf']]);
 });
+
+
+// Statically
+ServerSentEvents::send([
+    'type' => 'status',
+    'data' => ['message' => 'Static example']
+]);
+
+ServerSentEvents::stream(fn() => [
+    'type' => 'status',
+    'data' => ['message' => 'Static stream']
+]);
+
+
 ```
 
 Key Benefits:
