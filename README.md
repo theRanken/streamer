@@ -51,6 +51,7 @@ $sse->stream(function() {
 Usage in Different Frameworks:
 
 ```php
+
 // Laravel
 Route::get('/events', function () {
     $sse = new SSEStream\ServerSentEvents();
