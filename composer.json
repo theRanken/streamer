@@ -1,7 +1,8 @@
 {
-    "name": "ranken/streamer",
+    "name": "theranken/streamer",
     "description": "A component package that provides server sent event streaming response capabilities",
     "type": "library",
+    "license": "MIT",
     "require": {
         "php": ">=7.4"
     },
@@ -12,7 +13,7 @@
     },
     "authors": [
         {
-            "name": "Dev Ranken",
+            "name": "Rankencorp",
             "email": "rankencorp@gmail.com"
         }
     ]

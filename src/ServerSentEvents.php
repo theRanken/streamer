@@ -1,28 +1,135 @@
 <?php
 
-namespace Streamer;
+namespace Ranken\Streamer;
 
+
+
+/**
+ * Server-Sent Events (SSE) class
+ * 
+ * This class provides a simple way to send Server-Sent Events (SSE) to clients.
+ * 
+ * Usage:
+ * 
+ * // Send a message event
+ * ServerSentEvents::send('Hello, world!');
+ * 
+ * // Send a status event
+ * ServerSentEvents::send('Server is running', 'status');
+ * 
+ * // Send an update event with an ID
+ * ServerSentEvents::send('New message', 'update', '123');
+ * 
+ * // Stream events
+ * ServerSentEvents::stream(function() {
+ *     return [
+ *         'data' => 'New message',
+ *         'type' => 'update'
+ *     ];
+ * });
+ */
 class ServerSentEvents {
+
     // Configuration properties
-    private $maxClients = 100;
+    private $maxClients = 500;
     private $connectionTimeout = 300;
     private $allowedEventTypes = ['message', 'status', 'update', 'error'];
 
-    // Static method wrappers
-    public static function send($data, string $eventType = 'message', ?string $id = null)
+    /**
+     * Send an event to clients
+     * 
+     * @param mixed $data
+     * @param string $eventType
+     * @param string|null $id
+     * @return mixed
+     */
+    public static function send($data, string $eventType = 'message', ?string $id = null): mixed
     {
         $instance = new self();
         return $instance->sendEvent($data, $eventType, $id);
     }
 
-    public static function stream(callable $eventGenerator)
+    /**
+     * Stream events to clients
+     * 
+     * @param callable $eventGenerator
+     * @param int $timeout
+     * @return mixed
+     */
+    public static function stream(callable $eventGenerator, int $timeout = 300): mixed
     {
         $instance = new self();
         return $instance->streamEvents($eventGenerator);
     }
 
-    // Instance methods with different names to avoid conflicts
-    public function sendEvent($data, string $eventType = 'message', ?string $id = null)
+    /**
+     * Set the connection timeout
+     * 
+     * @param int $timeout
+     * @return self
+     */
+    public function setTimeout(int $timeout): self
+    {
+        $this->connectionTimeout = $timeout;
+        return $this;
+    }
+
+    /**
+     * Get the connection timeout
+     * 
+     * @return int
+     */
+    public function getTimeout(): int
+    {
+        return $this->connectionTimeout;
+    }
+
+    /**
+     * Set the allowed event types
+     * 
+     * @param string|array $eventType
+     * @return self
+     */
+    public function addEventType(string|array $eventType): self
+    {
+        $this->allowedEventTypes = array_merge(
+            $this->allowedEventTypes, 
+            is_array($eventType) ? $eventType : [$eventType]
+        );
+        return $this;
+    }
+
+    /**
+     * Set Max Clients
+     * 
+     * @param int $maxClients
+     * @return self
+     */
+    public function setMaxClients(int $maxClients): self
+    {
+        $this->maxClients = $maxClients;
+        return $this;
+    }
+
+    /**
+     * Get Max Clients
+     * 
+     * @return int
+     */
+    public function getMaxClients(): int
+    {
+        return $this->maxClients;
+    }
+
+    /**
+     * Send an event to clients
+     * 
+     * @param mixed $data
+     * @param string $eventType
+     * @param string|null $id
+     * @return self
+     */
+    public function sendEvent($data, string $eventType = 'message', ?string $id = null): self
     {
         // Disable output buffering
         while (ob_get_level()) {
@@ -65,7 +172,13 @@ class ServerSentEvents {
         return $this;
     }
 
-    public function streamEvents(callable $eventGenerator)
+    /**
+     * Stream events to clients
+     * 
+     * @param callable $eventGenerator
+     * @return mixed
+     */
+    public function streamEvents(callable $eventGenerator): mixed
     {
         // Disable script timeout
         set_time_limit(0);
